@@ -22,9 +22,11 @@ import re
 import os
 import urllib.parse as p
 import html
+from pathlib import Path
 
-csvFile = 'JPC metadata.csv'
+csvFile = 'metadata.csv'
 xmlbaseFile = 'metadata.xml'
+xmlFolder = 'xmlOutput'
 
 csvData = csv.reader(open(csvFile))
 csvDict = csv.DictReader(open(csvFile))
@@ -52,7 +54,12 @@ def nquote(arg):
 for row in csvDict:
     # we write to a specific directory
     path = re.sub(r'http://repository.cmu.edu/','',row['front_end_url'])
-    xmlFile = "JPC_archive/" + path + "/" + xmlbaseFile
+    xmlPath = xmlFolder + "/" + path + "/"
+    xmlFile = xmlPath + xmlbaseFile
+    xmlPath = Path(xmlPath)
+    xmlFile = Path(xmlFile)
+    xmlPath.mkdir(parents=True, exist_ok=True)
+    xmlFile.touch(exist_ok=True)
     xmlData = open(xmlFile, 'w')
     # now to write out the document
     xmlData.write('<documents><document>\n')
